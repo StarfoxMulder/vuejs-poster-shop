@@ -95,6 +95,9 @@ h1 {
     display: flex;
 }
 
+.searchbar > input:nth-of-type(1) {
+    width: 400px;
+}
 .searchbar > input {
     padding: 5px;
     font-size: 1.3rem;
