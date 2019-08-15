@@ -161,6 +161,16 @@ new Vue({
 // Here we're passing item and 
 // the item's index to addItem()
 // since both tie into addItem()
+
+/** 11/27 Note
+ * Within directives you can pass the source data array 
+ * as the argument in a method.  
+ * so for 'item in items' you can process items prior to rendering
+ * like 'item in processedItems(items)'
+ * if processedItems is defined within the methods 
+ * parameter of the component where the method is called.
+ */
+
 //
 // vue-resource allows for using http requests
 //
@@ -232,4 +242,174 @@ new Vue({
  *   display: none;
  * }
  * 
+ */
+/****
+ * 
+ * Components
+ * 
+ * Allow you to extend basic HTML elements to encapsulate reusable code.
+ * A component can be thought of as a mini instance of Vue with it's
+ * own properties, methods, etc that are isolated to that component 
+ * 
+ * Syntax for registering a component in Vue:
+ * 
+ * Vue.component('my-component', {
+ *  template: '<div>{{ msg }}</div>',
+ *  data() {
+ *    msg: 'A custom component!'
+ *  }
+ * });
+ * 
+ * You can now used <my-component></my-component> as an HTML element!
+ * Easier to manage the archetecture of an app with well structured components
+ * 
+ * For properties that could be shared/changed in an instance of a
+ * component (regardless of if the component is used ones or multiple times),
+ * Vue forces you to create that as a function of the component so that
+ * changes made to one of the instacnes do not affect others -- otherwise
+ * they would all share the same data array as the other instances, meaning
+ * that a change to the data in one would render as a change to them all
+ * ie. imagine iterating over an array of tweets, if the user liked one of them
+ * the like would be triggered across all instances of the tweet component
+ * (that's off the top of my head since I was just distracting myself with
+ * twitter, but I generally think that's the idea -- it makes sense to me anyway)
+ * 
+ * You can used Vue directives within components, like v-for, to iterate over
+ * arrays without having to manually code for each item in array.length.
+ * With the Cinema project, we iterate over the genre in genres within the
+ * template of the movie-filter component
+ * 
+ */
+/****
+ * 
+ * Components - Props
+ * https://www.udemy.com/vuejs-2-essentials/learn/v4/t/lecture/6539500?start=0
+ * 
+ * Components can be passed data from their parent through an HTML property
+ * <div id="example">
+ *   <my-component somedata="From the parent"></my-component>
+ * </div> 
+ * The component can use this data if it registers it as a "prop":
+ * Vue.component('my-component', {
+ *  template: '<div>{{ somedata }}</div>',
+ *  props: ['somedata']
+ * });
+ * 
+ * Props can be dynamic such that when the parent changes the data,
+ * the child component receives the change
+ * <my-compponent v-bind:somedata="parentdata"></my-component>
+ * 
+ * Child components can change data passed by props, but these changes
+ * do not flow back up to the parent. Data can flow down, never up.
+ * 
+ */
+/**
+ * Custom Events
+ * 
+ * - If you need a parent to receive data from a child you can emit
+ * a custom event from the child and have the parent listen to it
+ * 
+ * Vue.component('my-component', {
+ *  template: '<div v-on:click="emitEvent"></div>',
+ *  methods: {
+ *    emitEvent() {
+ *      this.$emit('customevent', 'From the child.');
+ *    }
+ *  }
+ * });
+ * 
+ * <div id="example">
+ *  <my-component v-on:customevent="eventHandler"></my-component>
+ * </div>
+ * 
+ * new Vue ({
+ *  el: '#example',
+ *  methods: { eventHandler(msg) { //do stuff } }
+ * });
+ * 
+ * the child emits the event with $ prefix and the parent
+ * listens for that emit with the v-on custom event; the
+ * parent receives the payload passed in the custom event --
+ * the first argument of the custom event *must* be the 
+ * title of the custom event and after that any number of
+ * additional arguments can be passed into the custom event
+ * 
+ * Data transfered via emit can only go one level up, directly
+ * from a child to its parent.  Therefore if you need to have
+ * the data go up more than one level you have to pass it 
+ * continuously up the tree
+ * (Child -> Child's Parent -> Child's Grandparent -> Root)
+ * Check out the cinema project for an example of this
+ * 
+ */
+/****
+ * 
+ * Single File Components
+ * 
+ * Sort of like individual HTML files where you can isolate
+ * <template> <script> <style> tags related to a specific 
+ * component all within one file.  <template> is sort of like
+ * your <main> tag.  You can use the component in your root
+ * Vue instance or in another component.  SFC cannot be 
+ * interpreted by a browser and so a build tool like Webpack
+ * or Browserify is required
+ * 
+ * <div id="eample">
+ *  <my-component></my-component>
+ * </div>
+ * 
+ * new Vue({
+ *  el: '#example',
+ *  components: { import from 'myComponent.vue' }
+ * });
+ * 
+ * Be mindful when refactoring to import referenced files 
+ * (in the case of the movie project, genres from genres.js)
+ * and to adjust the path since you're in the Components
+ * directory instead of root.  
+ * The portion of the script of the SFC dealing with what is
+ * to be rendered by Webpack (the attributes of the component)
+ * has to be wrapped in an 'export default {}' command.
+ * 
+ */
+/*****
+ * General reminder 
+ * .then() method returns a Promise and takes two artuments:
+ * callback functiosn for the success and failure cases
+ * of the Promise
+ * 
+ * The $ symbol indicates that it is a public API method
+ */
+/****
+ * When switching over from the dummy data to the API, be sure
+ * to double-check the data structure of the API and that you're
+ * referencing it correctly.
+ */
+
+/****
+ * Moment.Js is useful for rendering time apparopriately when
+ * the server and client are in different timezones
+ */
+/*****
+ * Object.defineProperty() is a method that allows you to
+ * add a property to an existing object. 
+ * -- First argument is the object
+ * -- Second is the new property's name
+ * -- Third is what you want the property to be
+ * For 'moment' the object we want to define an additional
+ * property on is Vue.prototype since it's from there that
+ * the components are created.
+ * 
+ * Since 'moment' is a property of the root instance of Vue,
+ * we can essentially make $moment a shortcut public method
+ * for "get() { return this.$root.moment }"
+ */
+/****
+ * Handlebars Note
+ * - You can pass a function into the {{}} to process the
+ * template data prior to it rendering in the DOM
+ * 
+ * For example {{ formatSessionTime(session.time) }}
+ * 
+ * if formatSessionTime() is a method defined in the component
  */
